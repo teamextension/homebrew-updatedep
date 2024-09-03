@@ -1,0 +1,5 @@
+<configuration>
+    <files>
+        <file uri="https://github.com/teamextension/homebrew-updatedep/releases/download/1.1.0/updatedep.jar" path="${user.dir}/updatedep.jar" size="100177392" classpath="true" checksum="6a4f15be"/>
+    </files>
+</configuration>
