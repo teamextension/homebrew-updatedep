@@ -5,7 +5,7 @@ class Updatedep < Formula
   sha256 "D834F95D657B3BFBDECC9475BFD99266E415BCCE652BE111ED06F89F0DB82D02"
   license "MIT"
 
-  depends_on "openjdk"
+  depends_on "openjdk@11"
 
   def install
     libexec.install "updatedep.jar"
