@@ -7,9 +7,25 @@ class Updatedep < Formula
 
   depends_on "openjdk@11"
 
+  resource "excludes" do
+    url "https://raw.githubusercontent.com/teamextension/homebrew-updatedep/main/excludes.txt"
+    sha256 "a343c7a468b75d521eaab54531412060280bcf7d20242670ee3a3b333418e6ed"
+  end
+
   def install
     libexec.install "updatedep.jar"
     bin.write_jar_script libexec/"updatedep.jar", "updatedep"
+
+    resource("excludes").stage do
+      libexec.install "excludes.txt"
+    end
+  end
+
+  def caveats
+    <<~EOS
+      The excludes.txt file is installed at:
+        #{libexec}/excludes.txt
+    EOS
   end
 
   test do
