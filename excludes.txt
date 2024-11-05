@@ -1,0 +1,7 @@
+alpha
+beta
+m
+mc
+pre
+rc
+snapshot
