@@ -13,13 +13,32 @@ class Updatedep < Formula
   end
 
   def install
-    libexec.install "updatedep.jar"
-    bin.write_jar_script libexec/"updatedep.jar", "updatedep"
-
-    resource("exclude").stage do
-      libexec.install "exclude.txt"
-    end
-  end
+      libexec.install "updatedep.jar"
+    
+      # Create a wrapper script to run the jar using the installed Java
+      (bin/"updatedep").write <<~EOS
+        #!/bin/bash
+        exec "#{Formula["openjdk@11"].opt_bin}/java" --add-opens java.base/sun.security.ssl=ALL-UNNAMED -jar "#{libexec}/updatedep.jar" "$@"
+      EOS
+    
+      # Create the .ud directory in the user's home directory
+      ud_dir = File.expand_path("~/.ud")
+      mkdir_p ud_dir
+    
+      # Install exclude.txt to the .ud directory
+      resource("exclude").stage do
+        exclude_path = File.join(ud_dir, "exclude.txt")
+        cp "exclude.txt", exclude_path
+        
+        # Add some debugging output
+        if File.exist?(exclude_path)
+          puts "exclude.txt successfully copied to #{exclude_path}"
+          puts "File contents: #{File.read(exclude_path)}"
+        else
+          puts "Failed to copy exclude.txt to #{exclude_path}"
+        end
+      end
+   end
 
   def caveats
     <<~EOS
