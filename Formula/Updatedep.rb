@@ -13,32 +13,31 @@ class Updatedep < Formula
   end
 
   def install
-      libexec.install "updatedep.jar"
-    
-      # Create a wrapper script to run the jar using the installed Java
-      (bin/"updatedep").write <<~EOS
-        #!/bin/bash
-        exec "#{Formula["openjdk@11"].opt_bin}/java" --add-opens java.base/sun.security.ssl=ALL-UNNAMED -jar "#{libexec}/updatedep.jar" "$@"
-      EOS
-    
-      # Create the .ud directory in the user's home directory
-      ud_dir = File.expand_path("~/.ud")
-      mkdir_p ud_dir
-    
-      # Install exclude.txt to the .ud directory
-      resource("exclude").stage do
-        exclude_path = File.join(ud_dir, "exclude.txt")
-        cp "exclude.txt", exclude_path
-        
-        # Add some debugging output
-        if File.exist?(exclude_path)
-          puts "exclude.txt successfully copied to #{exclude_path}"
-          puts "File contents: #{File.read(exclude_path)}"
-        else
-          puts "Failed to copy exclude.txt to #{exclude_path}"
-        end
-      end
-   end
+    libexec.install "updatedep.jar"
+  
+    # Store exclude.txt in libexec (not Home directory yet)
+    resource("exclude").stage do
+      cp "exclude.txt", libexec/"exclude.txt"
+    end
+  
+    # Wrapper script to handle first-time copying
+    (bin/"updatedep").write <<~EOS
+      #!/bin/bash
+      ud_dir="$HOME/.ud"
+      exclude_file="$ud_dir/exclude.txt"
+      
+      # Ensure ~/.ud exists and copy exclude.txt only once
+      if [ ! -d "$ud_dir" ]; then
+        mkdir -p "$ud_dir"
+        cp "#{libexec}/exclude.txt" "$exclude_file"
+      elif [ ! -f "$exclude_file" ]; then
+        cp "#{libexec}/exclude.txt" "$exclude_file"
+      fi
+  
+      # Run updatedep.jar
+      exec "#{Formula["openjdk@11"].opt_bin}/java" --add-opens java.base/sun.security.ssl=ALL-UNNAMED -jar "#{libexec}/updatedep.jar" "$@"
+    EOS
+  end
 
   def caveats
     <<~EOS
