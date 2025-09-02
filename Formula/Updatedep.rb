@@ -1,8 +1,8 @@
 class Updatedep < Formula
   desc "Updatedep is an application that analyzes the dependencies of a project, this helps check what dependency versions can be used with less to no vulnerabilities."
   homepage "https://github.com/teamextension/updatedep"
-  url "https://github.com/teamextension/updatedep/releases/download/1.5.0/updatedep.jar"
-  sha256 "c8486b7c3d506fc9067ba79c41cb95a69215c23df452b8b0d43cd467ad9f03c3"
+  url "https://github.com/teamextension/updatedep/releases/download/1.5.1/updatedep.jar"
+  sha256 "c52f0e16cf3e96c38ae00c3bd12b9b6563ff1e67f708e371a0cb73a2db0b59db"
   license "MIT"
 
   depends_on "openjdk@11"
